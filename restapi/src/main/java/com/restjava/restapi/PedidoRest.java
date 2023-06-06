@@ -29,9 +29,11 @@ public class PedidoRest {
     }
 
     @PostMapping
-    public void salvarPedido(@RequestBody Pedido pedido) {
-        repositorio.save(pedido);
+    public ResponseEntity<Void> salvarPedido(@RequestBody Pedido pedido) {
+    repositorio.save(pedido);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
 
     @PutMapping
     public void alterarPedido(@RequestBody Pedido pedido) {

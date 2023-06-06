@@ -3,8 +3,8 @@ package com.restjava.restapi;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +22,7 @@ import com.restjava.restapi.user.User;
 @RestController
 @RequestMapping("/user")
 public class UserRest {
+
     @Autowired //
     private RepositorioUser repositorio;
 
@@ -54,6 +55,7 @@ public class UserRest {
 
     }
 
+    // metodo de login requer 2 parametros email e senha por http
     @GetMapping("/login")
     public ResponseEntity<?> obterDadosUsuario(@RequestParam String email, @RequestParam String senha) {
         User usuario = repositorio.findByEmailAndSenha(email, senha);
@@ -62,4 +64,41 @@ public class UserRest {
         }
         return ResponseEntity.ok(usuario);
     }
+
+    // metodo de cadastro requer um json no body do request
+    @PostMapping("/cadastro")
+    public User cadastrarUsuario(@RequestBody User usuario) {
+        return repositorio.save(usuario);
+    }
+
+    // metodo de delete requer um id
+    @DeleteMapping("/deletar/{id}")
+    public void deletarDadosPorId(@PathVariable Long id) {
+        User entidade = repositorio.findById(id).orElse(null);
+
+        if (entidade == null) {
+            // Retorne uma resposta adequada caso a entidade não seja encontrada
+            // Exemplo: throw new EntityNotFoundException("Entidade não encontrada");
+        }
+
+        repositorio.delete(entidade);
+    }
+
+    // metodo de atualizar dados requer id do usuario e json no body
+    @PutMapping("/atualizar/{id}")
+    public User atualizar(@PathVariable Long id, @RequestBody User Atualizado) {
+        return repositorio.findById(id)
+                .map(novo -> {
+                    novo.setNome(Atualizado.getNome()); // Atualize os campos desejados
+                    novo.setSobrenome(Atualizado.getSobrenome());
+                    novo.setEmail(Atualizado.getEmail());
+                    novo.setSenha(Atualizado.getSenha());
+                    novo.setCpf(Atualizado.getCpf());
+                    novo.setTelefone(Atualizado.getTelefone());
+                    // Adicione outros campos que deseja atualizar
+
+                    return repositorio.save(novo);
+                }).orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado com o ID: " + id));
+    }
+
 }

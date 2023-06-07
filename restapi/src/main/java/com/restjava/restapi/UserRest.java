@@ -1,5 +1,6 @@
 package com.restjava.restapi;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import com.restjava.restapi.database.RepositorioUser;
 import com.restjava.restapi.user.User;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @RestController
 @RequestMapping("/user")
 public class UserRest {
@@ -28,77 +31,134 @@ public class UserRest {
 
     @GetMapping
     public List<User> listar() {
-        return repositorio.findAll();
+        try {
+            return repositorio.findAll();
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+            return Collections.emptyList(); // Retorna uma lista vazia como fallback
+        }
     }
 
     @PostMapping
     public void salvar(@RequestBody User user) {
-        repositorio.save(user);
+        try {
+            repositorio.save(user);
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+        }
     }
 
     @PutMapping
     public void alterar(@RequestBody User user) {
-        if (user.getId() > 0)
-            repositorio.save(user);
+        try {
+            if (user.getId() > 0)
+                repositorio.save(user);
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+
+        }
     }
 
     @DeleteMapping
     public void excluir(@RequestBody User user) {
-        repositorio.delete(user);
+        try {
+            repositorio.delete(user);
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
-        return repositorio.findById(id)
-                .map(record -> ResponseEntity.ok().body(record))
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return repositorio.findById(id)
+                    .map(record -> ResponseEntity.ok().body(record))
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 
     }
 
-    // metodo de login requer 2 parametros email e senha por http
-    @GetMapping("/login")
+    @GetMapping("/login") // metodo de login requer 2 parametros email e senha por http
     public ResponseEntity<?> obterDadosUsuario(@RequestParam String email, @RequestParam String senha) {
-        User usuario = repositorio.findByEmailAndSenha(email, senha);
-        if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+        try {
+            User usuario = repositorio.findByEmailAndSenha(email, senha);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+            }
+            return ResponseEntity.ok(usuario);
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(usuario);
     }
 
-    // metodo de cadastro requer um json no body do request
-    @PostMapping("/cadastro")
+    @PostMapping("/cadastro") // metodo de cadastro requer um json no body do request
     public User cadastrarUsuario(@RequestBody User usuario) {
-        return repositorio.save(usuario);
+        try {
+            return repositorio.save(usuario);
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    // metodo de delete requer um id
-    @DeleteMapping("/deletar/{id}")
-    public void deletarDadosPorId(@PathVariable Long id) {
-        User entidade = repositorio.findById(id).orElse(null);
+    @DeleteMapping("/deletar/{id}") // metodo de delete requer um id
+    public ResponseEntity<String> deletarDadosPorId(@PathVariable Long id) {
+        try {
+            User entidade = repositorio.findById(id).orElse(null);
 
-        if (entidade == null) {
-            // Retorne uma resposta adequada caso a entidade não seja encontrada
-            // Exemplo: throw new EntityNotFoundException("Entidade não encontrada");
+            if (entidade == null) {
+                throw new EntityNotFoundException("Entidade não encontrada");
+            }
+
+            repositorio.delete(entidade);
+
+            return ResponseEntity.ok().body("Entidade deletada com sucesso");
+        } catch (EntityNotFoundException e) {
+            // Lidar com a exceção EntityNotFoundException de alguma forma
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entidade não encontrada");
+        } catch (Exception e) {
+            // Lidar com outras exceções de alguma forma
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar a entidade");
+        }
+    }
+
+    @PutMapping("/atualizar/{id}") // metodo de atualizar dados requer id do usuario e json no body
+    public User atualizar(@PathVariable Long id, @RequestBody User Atualizado) {
+        try {
+            return repositorio.findById(id)
+                    .map(novo -> {
+                        novo.setNome(Atualizado.getNome()); // Atualize os campos desejados
+                        novo.setSobrenome(Atualizado.getSobrenome());
+                        novo.setEmail(Atualizado.getEmail());
+                        novo.setSenha(Atualizado.getSenha());
+                        novo.setCpf(Atualizado.getCpf());
+                        novo.setTelefone(Atualizado.getTelefone());
+                        // Adicione outros campos que deseja atualizar
+
+                        return repositorio.save(novo);
+                    }).orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado com o ID: " + id));
+        } catch (Exception e) {
+            // Lidar com a exceção de alguma forma
+            e.printStackTrace();
+            throw new UpdateUserException("Erro ao atualizar o usuário com o ID: " + id);
+
         }
 
-        repositorio.delete(entidade);
-    }
-
-    // metodo de atualizar dados requer id do usuario e json no body
-    @PutMapping("/atualizar/{id}")
-    public User atualizar(@PathVariable Long id, @RequestBody User Atualizado) {
-        return repositorio.findById(id)
-                .map(novo -> {
-                    novo.setNome(Atualizado.getNome()); // Atualize os campos desejados
-                    novo.setSobrenome(Atualizado.getSobrenome());
-                    novo.setEmail(Atualizado.getEmail());
-                    novo.setSenha(Atualizado.getSenha());
-                    novo.setCpf(Atualizado.getCpf());
-                    novo.setTelefone(Atualizado.getTelefone());
-                    // Adicione outros campos que deseja atualizar
-
-                    return repositorio.save(novo);
-                }).orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado com o ID: " + id));
     }
 
 }

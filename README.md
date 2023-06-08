@@ -3,20 +3,20 @@
 </p>
 
 # Objetivo
-Criação de uma api rest em java, para uma aplicação mobile Ionic/Angular -> (https://github.com/GuhzFernandes/EcologicElectronics-CLI)
+Criação de uma api rest em java, para uma aplicação mobile Ionic/Angular : (https://github.com/GuhzFernandes/EcologicElectronics-CLI)
 </br>
 Api tem como objetivo realizar funções para a aplicação, nos métodos:
 
-- GET;
-- PUT;
-- POST;
-- DELETE;
+> GET;
+> PUT;
+> POST;
+> DELETE;
 
 ## Tecnologias utilizadas
 
-Spring Boot;
-MySQL;
-Java;
+- Spring Boot
+- MySQL
+- Java
 
 ## Badges
 

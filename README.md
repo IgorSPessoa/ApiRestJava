@@ -7,9 +7,9 @@ Criação de uma api rest em java, para uma aplicação mobile Ionic/Angular : (
 </br>
 Api tem como objetivo realizar funções para a aplicação, nos métodos:
 
-> GET;
-> PUT;
-> POST;
+> GET;</br>
+> PUT;</br>
+> POST;</br>
 > DELETE;
 
 ## Tecnologias utilizadas

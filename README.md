@@ -51,8 +51,8 @@ Aqui estão as badges das tecnologias usadas neste projeto:
 |[MATEUS COSTA PORTO ALBUQUERQUE](https://github.com/MateusCPA)|125111378101|
 |[VINICIUS MATOS DE SOUZA](https://github.com/vinixmatos)|125111349444|
 
----
-
 ## Agradecimento
 
 Agradecemos por realizar a leitura do nosso Projeto! Se tiver alguma dúvida, sinta-se à vontade para entrar em contato conosco.
+
+---

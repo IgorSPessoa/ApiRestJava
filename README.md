@@ -3,7 +3,14 @@
 </p>
 
 # Objetivo
-Criação de uma api rest em java, para uma aplicação mobile Ionic/Angular
+Criação de uma api rest em java, para uma aplicação mobile Ionic/Angular -> (https://github.com/GuhzFernandes/EcologicElectronics-CLI)
+</br>
+Api tem como objetivo realizar funções para a aplicação, nos métodos:
+
+- GET;
+- PUT;
+- POST;
+- DELETE;
 
 ## Tecnologias utilizadas
 
@@ -21,7 +28,7 @@ Aqui estão as badges das tecnologias usadas neste projeto:
 
 ## Como executar o projeto
 
-- 1.: Certifique-se de ter o Java 17 instalado em sua máquina.
+- 1.: Certifique-se de ter o Java 17 instalado em sua máquina e é necessario ter o kit de desenvolvimento JDK instalado.
 - 2.: Instale o MySQL 8.0 e crie um banco de dados chamado "restapi".
 - 3.: Faça o clone deste repositório.
 - 4.: Abra o Spring boot ou siga o passo adicional 4.1 abaixo.

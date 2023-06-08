@@ -21,17 +21,17 @@ Aqui estão as badges das tecnologias usadas neste projeto:
 
 ## Como executar o projeto
 
-1.: Certifique-se de ter o Java 17 instalado em sua máquina.
-2.: Instale o MySQL 8.0 e crie um banco de dados chamado "restapi".
-3.: Faça o clone deste repositório.
-4.: Abra o Spring boot ou siga o passo adicional 4.1 abaixo.
-4.1: Abra o Visual Studio Code, e adicione das seguintes extenções: Extension Pack for Java e Spring Boot Extension Pack.
-5.: Configure as informações de conexão com o banco de dados no arquivo `application.properties`, 
-    alterando as propriedades:
-    spring.datasource.username=  
-    spring.datasource.password=
-6.: Execute a aplicação.
-7. Acesse a aplicação em `http://localhost:8080`.
+- 1.: Certifique-se de ter o Java 17 instalado em sua máquina.
+- 2.: Instale o MySQL 8.0 e crie um banco de dados chamado "restapi".
+- 3.: Faça o clone deste repositório.
+- 4.: Abra o Spring boot ou siga o passo adicional 4.1 abaixo.
+- 4.1: Abra o Visual Studio Code, e adicione das seguintes extenções: Extension Pack for Java e Spring Boot Extension Pack.
+- 5.: Configure as informações de conexão com o banco de dados no arquivo `application.properties`, 
+-     alterando as propriedades:
+-     spring.datasource.username=  
+-     spring.datasource.password=
+- 6.: Execute a aplicação.
+- 7. Acesse a aplicação em `http://localhost:8080`.
 
 ## Equipe
 

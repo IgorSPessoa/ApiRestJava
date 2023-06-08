@@ -26,12 +26,11 @@ Aqui estão as badges das tecnologias usadas neste projeto:
 - 3.: Faça o clone deste repositório.
 - 4.: Abra o Spring boot ou siga o passo adicional 4.1 abaixo.
 - 4.1: Abra o Visual Studio Code, e adicione das seguintes extenções: Extension Pack for Java e Spring Boot Extension Pack.
-- 5.: Configure as informações de conexão com o banco de dados no arquivo `application.properties`, 
--     alterando as propriedades:
+- 5.: Configure as informações de conexão com o banco de dados no arquivo `application.properties`, alterando as propriedades:
 -     spring.datasource.username=  
 -     spring.datasource.password=
 - 6.: Execute a aplicação.
-- 7. Acesse a aplicação em `http://localhost:8080`.
+- 7.: Acesse a aplicação em `http://localhost:8080`.
 
 ## Equipe
 
@@ -45,8 +44,8 @@ Aqui estão as badges das tecnologias usadas neste projeto:
 |[MATEUS COSTA PORTO ALBUQUERQUE](https://github.com/MateusCPA)|125111378101|
 |[VINICIUS MATOS DE SOUZA](https://github.com/vinixmatos)|125111349444|
 
+---
 
 ## Agradecimento
----
 
 Agradecemos por realizar a leitura do nosso Projeto! Se tiver alguma dúvida, sinta-se à vontade para entrar em contato conosco.

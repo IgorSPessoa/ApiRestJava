@@ -2,6 +2,7 @@ package com.restjava.restapi;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import com.restjava.restapi.database.RepositorioUser;
@@ -35,7 +37,6 @@ public class UserRest {
             return repositorio.findAll();
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
             return Collections.emptyList(); // Retorna uma lista vazia como fallback
         }
     }
@@ -46,7 +47,6 @@ public class UserRest {
             repositorio.save(user);
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
         }
     }
 
@@ -57,7 +57,6 @@ public class UserRest {
                 repositorio.save(user);
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
 
         }
     }
@@ -68,7 +67,6 @@ public class UserRest {
             repositorio.delete(user);
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
 
         }
     }
@@ -76,19 +74,25 @@ public class UserRest {
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
         try {
-            return repositorio.findById(id)
-                    .map(record -> ResponseEntity.ok().body(record))
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            // Lidar com a exceção de alguma forma
-            e.printStackTrace();
+            // Optional é uma classe que representa uma estrutura de
+            // dados que pode conter um valor ou ser vazio. Está sendo usada para evitar o
+            // tratamento de valores nulos diretamente
+            Optional<User> response = repositorio.findById(id);
 
+            if (response.isPresent()) {
+                User user = response.get();
+                return ResponseEntity.ok().body(user);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
     @GetMapping("/login") // metodo de login requer 2 parametros email e senha por http
+    // O <?>, estamos permitindo que o tipo do corpo da resposta seja
+    // qualquer tipo, pois não sei qual tipo retorna :p
     public ResponseEntity<?> obterDadosUsuario(@RequestParam String email, @RequestParam String senha) {
         try {
             User usuario = repositorio.findByEmailAndSenha(email, senha);
@@ -98,19 +102,28 @@ public class UserRest {
             return ResponseEntity.ok(usuario);
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PostMapping("/cadastro") // metodo de cadastro requer um json no body do request
-    public User cadastrarUsuario(@RequestBody User usuario) {
+    public ResponseEntity<?> cadastrarUsuario(@RequestBody User usuario) {
         try {
-            return repositorio.save(usuario);
+            // Verificar se o e-mail já está cadastrado
+            User usuarioExistente = repositorio.findByEmail(usuario.getEmail());
+            if (usuarioExistente != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já está cadastrado");
+            }
+
+            User novoUsuario = repositorio.save(usuario);
+            if (novoUsuario != null) {
+                return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao cadastrar o usuário");
+            }
         } catch (Exception e) {
-            // Lidar com a exceção de alguma forma
             e.printStackTrace();
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -127,12 +140,11 @@ public class UserRest {
 
             return ResponseEntity.ok().body("Entidade deletada com sucesso");
         } catch (EntityNotFoundException e) {
-            // Lidar com a exceção EntityNotFoundException de alguma forma
-            e.printStackTrace();
+            // Lidar com a exceção de alguma forma
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entidade não encontrada");
         } catch (Exception e) {
             // Lidar com outras exceções de alguma forma
-            e.printStackTrace();
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar a entidade");
         }
     }
@@ -149,12 +161,11 @@ public class UserRest {
                         novo.setCpf(Atualizado.getCpf());
                         novo.setTelefone(Atualizado.getTelefone());
                         // Adicione outros campos que deseja atualizar
-
                         return repositorio.save(novo);
-                    }).orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado com o ID: " + id));
+                    }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Usuário não encontrado com o ID: " + id));
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
             throw new UpdateUserException("Erro ao atualizar o usuário com o ID: " + id);
 
         }

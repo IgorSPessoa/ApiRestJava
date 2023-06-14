@@ -19,8 +19,8 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String senha;
-    private Integer telefone;
-    private Integer cpf;
+    private Long telefone;
+    private Long cpf;
 
     public Long getId() {
         return id;
@@ -62,19 +62,19 @@ public class User {
         this.senha = senha;
     }
 
-    public Integer getTelefone() {
+    public Long getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(Integer telefone) {
+    public void setTelefone(Long telefone) {
         this.telefone = telefone;
     }
 
-    public Integer getCpf() {
+    public Long getCpf() {
         return cpf;
     }
 
-    public void setCpf(Integer cpf) {
+    public void setCpf(Long cpf) {
         this.cpf = cpf;
     }
 

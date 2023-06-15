@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,9 +80,9 @@ public class UserRest {
 
             if (response.isPresent()) {
                 User user = response.get();
-                return ResponseEntity.ok().body(user);
+                return ResponseEntity.ok().body(user); //Usuário encontrado e retornou o user
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.notFound().build(); // Usuário não encontrado
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -95,14 +94,16 @@ public class UserRest {
     // qualquer tipo, pois não sei qual tipo retorna :p
     public ResponseEntity<?> obterDadosUsuario(@RequestParam String email, @RequestParam String senha) {
         try {
-            User usuario = repositorio.findByEmailAndSenha(email, senha);
-            if (usuario == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+            User usuario = repositorio.findByEmail(email);
+            if (usuario == null || !usuario.getSenha().equals(senha)) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-mail ou senha incorretos");
             }
-            return ResponseEntity.ok(usuario);
-        } catch (Exception e) {
+            return ResponseEntity.ok(usuario); // Requisição bem-sucedida, retorna o usuário
+        } catch (ResponseStatusException erro) {
+            throw erro; // Lança a exceção de resposta com status para ser tratada adequadamente
+        } catch (Exception erro) {
             // Lidar com a exceção de alguma forma
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno do servidor");
         }
     }
 

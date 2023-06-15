@@ -37,7 +37,6 @@ public class PedidoRest {
              * Aqui vamos tratar o erro de exceção e
              * retornar uma mensagem de erro personalizada, para depois reportar ao cliente
              */
-            e.printStackTrace();
             return Collections.emptyList(); // Retorna uma lista vazia como fallback
         }
     }
@@ -50,7 +49,6 @@ public class PedidoRest {
                 repositorio.save(pedido);
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
         }
     }
 
@@ -61,7 +59,6 @@ public class PedidoRest {
             repositorio.delete(pedido);
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
         }
     }
 
@@ -78,7 +75,6 @@ public class PedidoRest {
                     .body("Pedido criado com sucesso. ID: " + novoPedido.getId());
         } catch (Exception e) {
             // Lidar com a exceção de alguma forma
-            e.printStackTrace();
             // Quando da erro ao criar pedido é enviado status de erro ao criar pedido
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar pedido");
         }
@@ -87,17 +83,21 @@ public class PedidoRest {
     @GetMapping("/usuario/{userId}") // GET de todos os pedidos do usuario especificado
     public ResponseEntity<List<Pedido>> getPedidosByUserId(@PathVariable Long userId) {
         try {
-            /*
-             * Realiza uma busca por pedidos com base em um ID de usuário em um repositório
-             * e retorna uma resposta HTTP contendo os pedidos encontrados.
-             */
-
             List<Pedido> pedidos = repositorio.findByUserId(userId);
-            return new ResponseEntity<>(pedidos, HttpStatus.OK);
+
+            if (!pedidos.isEmpty()) {
+                // Retorna com status HTTP 200 e a lista de pedidos
+                // encontrados
+                return ResponseEntity.ok(pedidos);
+            } else {
+                // Retorna com status HTTP 404 se nenhum pedido
+                // for encontrado
+                return ResponseEntity.notFound().build();
+            }
+            // Aqui Lidar com a exceção de alguma forma
         } catch (Exception e) {
-            // Lidar com a exceção de alguma forma
-            e.printStackTrace();
-            // Quando da erro ao criar pedido é enviado status de erro ao criar pedido
+            // Retorna com status HTTP 500 em caso
+            // de erro interno do servidor
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

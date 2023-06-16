@@ -15,12 +15,12 @@ public class User {
     private String nome;
     @Column(nullable = false)
     private String sobrenome;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private String senha;
-    private Number telefone;
-    private Number cpf;
+    private Long telefone;
+    private Long cpf;
 
     public Long getId() {
         return id;
@@ -62,19 +62,19 @@ public class User {
         this.senha = senha;
     }
 
-    public Number getTelefone() {
+    public Long getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(Number telefone) {
+    public void setTelefone(Long telefone) {
         this.telefone = telefone;
     }
 
-    public Number getCpf() {
+    public Long getCpf() {
         return cpf;
     }
 
-    public void setCpf(Number cpf) {
+    public void setCpf(Long cpf) {
         this.cpf = cpf;
     }
 

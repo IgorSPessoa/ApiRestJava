@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import com.restjava.restapi.database.RepositorioPedido;
 import com.restjava.restapi.database.RepositorioUser;
+import com.restjava.restapi.pedido.Pedido;
 import com.restjava.restapi.user.User;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -29,6 +31,9 @@ public class UserRest {
 
     @Autowired //
     private RepositorioUser repositorio;
+
+    @Autowired
+    private RepositorioPedido repositorioPedido;
 
     @GetMapping
     public List<User> listar() {
@@ -150,6 +155,10 @@ public class UserRest {
             if (entidade == null) {
                 throw new EntityNotFoundException("Entidade não encontrada");
             }
+
+            // Deletar todos os pedidos relacionados ao cliente
+            List<Pedido> pedidos = repositorioPedido.findByUserId(id);
+            repositorioPedido.deleteAll(pedidos);
 
             repositorio.delete(entidade);
 

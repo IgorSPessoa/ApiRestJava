@@ -80,12 +80,26 @@ public class UserRest {
 
             if (response.isPresent()) {
                 User user = response.get();
-                return ResponseEntity.ok().body(user); //Usuário encontrado e retornou o user
+                return ResponseEntity.ok().body(user); // Usuário encontrado e retornou o user
             } else {
                 return ResponseEntity.notFound().build(); // Usuário não encontrado
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/esqueceusenha")
+    public ResponseEntity<?> verificarEmail(@RequestParam String email) {
+        try {
+            User usuario = repositorio.findByEmail(email);
+            if (usuario == null) {
+                return ResponseEntity.ok(false); // E-mail não existe
+            } else {
+                return ResponseEntity.ok(true); // E-mail existe
+            }
+        } catch (Exception erro) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno do servidor");
         }
     }
 
